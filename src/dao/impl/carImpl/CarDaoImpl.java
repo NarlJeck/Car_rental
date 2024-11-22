@@ -1,9 +1,9 @@
-package dao;
+package dao.impl.carImpl;
 
+import dao.carDao.CarDao;
 import entity.car.Car;
 import exception.DaoException;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import util.ConnectionManager;
 
 import java.sql.*;
@@ -12,10 +12,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
-@NoArgsConstructor
-public class CarDao implements Dao<Long, Car> {
 
-    private static final CarDao INSTANCE = new CarDao();
+public class CarDaoImpl implements CarDao {
+
+    private static final String CAR_ID = "car_id";
+    private static final String YEAR = "year";
+    private static final String NUMBER_SEATS = "number_seats";
+    private static final String RENTAL_PRICE_PER_DAY = "rental_price_per_day";
+    private static final String REGISTRATION_NUMBER = "registration_number";
+    private static final String COLOR_CAR_ID = "color_id";
+    private static final String MODEL_ID = "model_id";
+    private static final String STATUS_ID = "status_id";
+    private static final String TYPE_ID = "type_id";
+
+    private static CarDaoImpl INSTANCE;
+
+    private CarDaoImpl() {
+    }
 
     private static final String DELETE_SQL = "DELETE FROM car WHERE car_id = ?";
     private static final String CREATE_SQL = "INSERT INTO car(" +
@@ -35,7 +48,6 @@ public class CarDao implements Dao<Long, Car> {
             "rental_price_per_day = ?," +
             "registration_number = ?," +
             "color_id = ?," +
-            "model_id = ?," +
             "status_id = ?," +
             "type_id = ?" +
             "WHERE car_id = ?";
@@ -63,7 +75,7 @@ public class CarDao implements Dao<Long, Car> {
                     "type_id " +
                     "FROM car WHERE car_id =?";
 
-    private final CarColorDao colorCarDao = CarColorDao.getInstance();
+    private final CarColorDaoImpl carColorDao = CarColorDaoImpl.getInstance();
 
     public Car create(Car car) {
         try (var connection = ConnectionManager.get();
@@ -81,7 +93,7 @@ public class CarDao implements Dao<Long, Car> {
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                car.setCarId(generatedKeys.getLong("car_id"));
+                car.setCarId(generatedKeys.getLong(CAR_ID));
             }
             return car;
 
@@ -121,21 +133,39 @@ public class CarDao implements Dao<Long, Car> {
     }
 
 
-
     public Optional<Car> findById(Long carId) {
-        try (var connection = ConnectionManager.get();
-             var preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
-            preparedStatement.setLong(1, carId);
+        try (Connection connection = ConnectionManager.get()) {
+            return findById(carId, connection);
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
 
-            var resultSet = preparedStatement.executeQuery();
+    public Optional<Car> findById(Long id, Connection connection) {
+        try (var prepareStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+            prepareStatement.setLong(1, id);
+
+            ResultSet resultSet = prepareStatement.executeQuery();
             Car car = null;
             if (resultSet.next()) {
-                car = buildCar(resultSet);
+                car = new Car(
+                        resultSet.getLong(CAR_ID),
+                        resultSet.getTimestamp(YEAR).toLocalDateTime(),
+                        resultSet.getInt(NUMBER_SEATS),
+                        resultSet.getBigDecimal(RENTAL_PRICE_PER_DAY),
+                        resultSet.getString(REGISTRATION_NUMBER),
+                        carColorDao.findById(resultSet.getLong(COLOR_CAR_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        resultSet.getLong(MODEL_ID),
+                        resultSet.getLong(STATUS_ID),
+                        resultSet.getLong(TYPE_ID)
+                );
             }
             return Optional.ofNullable(car);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+
     }
 
     public List<Car> findAll() {
@@ -152,22 +182,28 @@ public class CarDao implements Dao<Long, Car> {
             throw new DaoException(e);
         }
     }
-    private Car buildCar(ResultSet resultSet) throws SQLException {
+
+    public Car buildCar(ResultSet resultSet) throws SQLException {
+
         return new Car(
-                resultSet.getLong("car_id"),
-                resultSet.getTimestamp("year").toLocalDateTime(),
-                resultSet.getInt("number_seats"),
-                resultSet.getBigDecimal("rental_price_per_day"),
-                resultSet.getString("registration_number"),
-                colorCarDao.findById(resultSet.getLong("color_car_id"),
-                resultSet.getStatement().getConnection()).orElse(null),
-                resultSet.getLong("model_id"),
-                resultSet.getLong("status_id"),
-                resultSet.getLong("type_id")
+                resultSet.getLong(CAR_ID),
+                resultSet.getTimestamp(YEAR).toLocalDateTime(),
+                resultSet.getInt(NUMBER_SEATS),
+                resultSet.getBigDecimal(RENTAL_PRICE_PER_DAY),
+                resultSet.getString(REGISTRATION_NUMBER),
+                carColorDao.findById(resultSet.getLong(COLOR_CAR_ID),
+                        resultSet.getStatement().getConnection()).orElse(null),
+                resultSet.getLong(MODEL_ID),
+                resultSet.getLong(STATUS_ID),
+                resultSet.getLong(TYPE_ID)
         );
     }
 
-    public static CarDao getInstance() {
+    public static CarDaoImpl getInstance() {
+        if(INSTANCE==null){
+            INSTANCE= new CarDaoImpl();
+        }
+
         return INSTANCE;
     }
 }

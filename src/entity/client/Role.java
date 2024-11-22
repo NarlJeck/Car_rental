@@ -7,6 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
+@Builder
 
 public class Role {
 

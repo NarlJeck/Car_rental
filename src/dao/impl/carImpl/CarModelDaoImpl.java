@@ -1,34 +1,39 @@
-package dao;
+package dao.impl.carImpl;
 
-import entity.car.Car;
+import dao.carDao.CarModelDao;
 import entity.car.CarColor;
+import entity.car.CarModel;
 import exception.DaoException;
 import util.ConnectionManager;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CarColorDao implements Dao<Long, CarColor> {
+public class CarModelDaoImpl implements CarModelDao {
 
-    private static final CarColorDao INSTANCE = new CarColorDao();
+    private static final String MODEL_CAR_ID = "model_car_id";
+    private static final String MODEL = "model";
 
-    private CarColorDao() {
+    private static final CarModelDaoImpl INSTANCE = new CarModelDaoImpl();
 
+    private CarModelDaoImpl() {
     }
 
-    private static final String CREATE_SQL = "INSERT INTO car_color(" +
-            "color" +
-            "VALUES (?)";
-    private static final String FIND_BY_ID_SQL = "SELECT car_color_id," +
-            "color " +
-            "FROM car_color " +
-            "WHERE car_color_id = ?";
-    private static final String DELETE_SQL = "DELETE FROM car_color WHERE car_color_id = ?";
+    private static final String CREATE_SQL = "INSERT INTO model_car(model) VALUES (?)";
+    private static final String FIND_BY_ID_SQL = "SELECT model_car_id," +
+            "model " +
+            "FROM model_car " +
+            "WHERE model_car_id = ?";
+    private static final String DELETE_SQL = "DELETE FROM model_car WHERE model_car_id = ?";
 
-    private static final String UPDATE_SQL = "UPDATE car_color SET color = ? WHERE car_color = ?";
-    private static final String FIND_ALL_SQL = "SELECT car_color_id, color FROM car_color";
+    private static final String UPDATE_SQL = "UPDATE model_car SET model = ? WHERE model_car_id = ?";
+    private static final String FIND_ALL_SQL = "SELECT model_car_id, model FROM model_car";
+
 
     @Override
     public boolean delete(Long id) {
@@ -42,17 +47,17 @@ public class CarColorDao implements Dao<Long, CarColor> {
     }
 
     @Override
-    public CarColor create(CarColor carColor) {
+    public CarModel create(CarModel carModel) {
         try (var connection = ConnectionManager.get();
              var preparedStatement = connection.prepareStatement(CREATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, carColor.getColor());
+            preparedStatement.setString(1, carModel.getModel());
             preparedStatement.executeUpdate();
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                carColor.setColorCarId(generatedKeys.getLong("car_id"));
+                carModel.setModelCarId(generatedKeys.getLong(MODEL_CAR_ID));
             }
-            return carColor;
+            return carModel;
 
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -60,21 +65,20 @@ public class CarColorDao implements Dao<Long, CarColor> {
     }
 
     @Override
-    public void update(CarColor carColor) {
+    public void update(CarModel carModel) {
         try (var connection = ConnectionManager.get();
              var preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
-            preparedStatement.setString(1, carColor.getColor());
-            preparedStatement.setLong(2, carColor.getColorCarId());
+            preparedStatement.setString(1, carModel.getModel());
+            preparedStatement.setLong(2, carModel.getModelCarId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-
     }
 
     @Override
-    public Optional<CarColor> findById(Long id) {
+    public Optional<CarModel> findById(Long id) {
         try (Connection connection = ConnectionManager.get()) {
             return findById(id, connection);
         } catch (SQLException e) {
@@ -82,19 +86,19 @@ public class CarColorDao implements Dao<Long, CarColor> {
         }
     }
 
-    public Optional<CarColor> findById(Long id, Connection connection) {
+    public Optional<CarModel> findById(Long id, Connection connection) {
         try (var prepareStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             prepareStatement.setLong(1, id);
 
             ResultSet resultSet = prepareStatement.executeQuery();
-            CarColor colorCar = null;
+            CarModel carModel = null;
             if (resultSet.next()) {
-                colorCar = new CarColor(
-                        resultSet.getLong("car_color_id"),
-                        resultSet.getString("color")
+                carModel = new CarModel(
+                        resultSet.getLong(MODEL_CAR_ID),
+                        resultSet.getString(MODEL)
                 );
             }
-            return Optional.ofNullable(colorCar);
+            return Optional.ofNullable(carModel);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
@@ -102,29 +106,29 @@ public class CarColorDao implements Dao<Long, CarColor> {
     }
 
     @Override
-    public List<CarColor> findAll() {
+    public List<CarModel> findAll() {
         try (var connection = ConnectionManager.get();
              var prepareStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             var resultSet = prepareStatement.executeQuery();
 
-            List<CarColor> carColors = new ArrayList<>();
+            List<CarModel> carModels = new ArrayList<>();
             while (resultSet.next()) {
-                carColors.add(buildCarColor(resultSet));
+                carModels.add(buildCarModel(resultSet));
             }
-            return carColors;
+            return carModels;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
-    private CarColor buildCarColor(ResultSet resultSet) throws SQLException {
-        return new CarColor(
-                resultSet.getLong("car_color_id"),
-                resultSet.getString("color")
+    private CarModel buildCarModel(ResultSet resultSet) throws SQLException {
+        return new CarModel(
+                resultSet.getLong(MODEL_CAR_ID),
+                resultSet.getString(MODEL)
         );
     }
 
-    public static CarColorDao getInstance() {
+    public static CarModelDaoImpl getInstance() {
         return INSTANCE;
     }
 }

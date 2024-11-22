@@ -7,10 +7,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
+@Builder
+public class CarTyp {
 
-public class StatusCar {
-
-    private Long statusCarId;
-    private String status;
+    private Long typeCarId;
+    private String type;
 
 }

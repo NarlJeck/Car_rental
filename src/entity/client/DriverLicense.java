@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
+@Builder
 public class DriverLicense {
 
     private Long DriverLicenseId;

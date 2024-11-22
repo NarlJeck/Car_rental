@@ -7,6 +7,8 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@Builder
 
 public class Client {
     private Long clientId;
@@ -14,9 +16,12 @@ public class Client {
     private Integer phoneNumber;
     private String email;
     private String residentialAddress;
-    private Long bankCardId;
-    private Long driverLicenseId;
-    private Long passportId;
-    private Long roleId;
+    private Role role;
+    private Passport passport;
+    private DriverLicense driverLicense;
+    private BankCard bankCard;
+
+
+
 
 }

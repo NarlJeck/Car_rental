@@ -10,9 +10,9 @@ import lombok.*;
 @EqualsAndHashCode
 @Builder
 
-public class CarColor {
+public class CarStatus {
 
-    private Long colorCarId;
-    private String color;
+    private Long statusCarId;
+    private String status;
 
 }

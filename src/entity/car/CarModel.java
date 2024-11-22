@@ -7,9 +7,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class TypCar {
+@EqualsAndHashCode
+@Builder
+public class CarModel {
 
-    private Long typeCarId;
-    private String type;
+    private Long modelCarId;
+    private String model;
 
 }

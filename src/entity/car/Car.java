@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@Builder
 @ToString
 
 
