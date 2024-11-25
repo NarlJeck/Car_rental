@@ -51,9 +51,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void delete(ClientDto clientDto) {
-        clientDao.delete(clientDto.getClientId());
-
+    public boolean delete(ClientDto clientDto) {
+      return clientDao.delete(clientDto.getClientId());
     }
 
     @Override

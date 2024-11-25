@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-
 public class CarDaoImpl implements CarDao {
 
     private static final String CAR_ID = "car_id";

@@ -12,7 +12,7 @@ public interface ClientService {
 
     void update(ClientDto clientDto);
 
-    void delete(ClientDto clientDto);
+    boolean delete(ClientDto clientDto);
 
     ClientDto create(ClientDto clientDto);
 }
