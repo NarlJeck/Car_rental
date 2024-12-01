@@ -2,14 +2,15 @@ package service.impl;
 
 import dao.clientDao.ClientDao;
 import dao.impl.clientImpl.ClientDaoImpl;
-import dto.ClientDto;
+import dto.clientDto.ClientDto;
 import entity.client.Client;
 import mapper.ClientMapper;
 import mapper.impl.ClientMapperImpl;
 import service.ClientService;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -41,7 +42,7 @@ public class ClientServiceImpl implements ClientService {
         return clientDao.findAll()
                 .stream()
                 .map(clientMapper::toDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override

@@ -4,6 +4,7 @@ import dao.clientDao.ClientDao;
 import entity.client.Client;
 import exception.DaoException;
 import lombok.Getter;
+import lombok.ToString;
 import util.ConnectionManager;
 
 import java.sql.Connection;
@@ -12,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 public class ClientDaoImpl implements ClientDao {
 
@@ -83,7 +83,6 @@ public class ClientDaoImpl implements ClientDao {
                     "driver_license_id," +
                     "bank_card_id " +
                     "FROM client WHERE client_id =?";
-
 
 
     @Override
@@ -207,8 +206,8 @@ public class ClientDaoImpl implements ClientDao {
                 resultSet.getLong(CLIENT_ID),
                 resultSet.getString(FULL_NAME),
                 resultSet.getInt(PHONE_NUMBER),
-                resultSet.getString(RESIDENTIAL_ADDRESS),
                 resultSet.getString(EMAIL),
+                resultSet.getString(RESIDENTIAL_ADDRESS),
                 roleDao.findById(resultSet.getLong(ROLE_ID),
                         resultSet.getStatement().getConnection()).orElse(null),
                 passportDao.findById(resultSet.getLong(PASSPORT_ID),
@@ -219,10 +218,12 @@ public class ClientDaoImpl implements ClientDao {
                         resultSet.getStatement().getConnection()).orElse(null));
     }
 
-    public static ClientDaoImpl getInstance() {
+    public static synchronized ClientDaoImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ClientDaoImpl();
         }
         return INSTANCE;
     }
+
+
 }

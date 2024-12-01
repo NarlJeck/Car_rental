@@ -136,11 +136,10 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    public static RoleDaoImpl getInstance() {
+    public static synchronized RoleDaoImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new RoleDaoImpl();
         }
-
         return INSTANCE;
     }
 

@@ -53,7 +53,7 @@ public class BankCardDaoImpl implements BankCardDao {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DaoException("Exception bankCardDao - method(delete)",e);
+            throw new DaoException("Exception bankCardDao - method(delete)", e);
         }
 
     }
@@ -74,7 +74,7 @@ public class BankCardDaoImpl implements BankCardDao {
             return bankCard;
 
         } catch (SQLException e) {
-            throw new DaoException("Exception bankCardDao - method(create)",e);
+            throw new DaoException("Exception bankCardDao - method(create)", e);
         }
     }
 
@@ -89,17 +89,17 @@ public class BankCardDaoImpl implements BankCardDao {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DaoException("Exception bankCardDao - method(update)",e);
+            throw new DaoException("Exception bankCardDao - method(update)", e);
         }
     }
 
     @Override
     public Optional<BankCard> findById(Long bankCardId) {
-            try (Connection connection = ConnectionManager.get()) {
-                return findById(bankCardId, connection);
-            } catch (SQLException e) {
-                throw new DaoException("Exception bankCardDao - method(findById)",e);
-            }
+        try (Connection connection = ConnectionManager.get()) {
+            return findById(bankCardId, connection);
+        } catch (SQLException e) {
+            throw new DaoException("Exception bankCardDao - method(findById)", e);
+        }
     }
 
     public Optional<BankCard> findById(Long id, Connection connection) {
@@ -117,7 +117,7 @@ public class BankCardDaoImpl implements BankCardDao {
             }
             return Optional.ofNullable(bankCard);
         } catch (SQLException e) {
-            throw new DaoException("Exception bankCardDao - method(findById),Connection",e);
+            throw new DaoException("Exception bankCardDao - method(findById),Connection", e);
         }
 
     }
@@ -141,13 +141,12 @@ public class BankCardDaoImpl implements BankCardDao {
             }
             return bankCards;
         } catch (SQLException e) {
-            throw new DaoException("Exception bankCardDao - method(findAll)",e);
+            throw new DaoException("Exception bankCardDao - method(findAll)", e);
         }
     }
 
-    public static BankCardDaoImpl getInstance()
-    {
-        if(INSTANCE==null){
+    public static synchronized BankCardDaoImpl getInstance() {
+        if (INSTANCE == null) {
             INSTANCE = new BankCardDaoImpl();
         }
 

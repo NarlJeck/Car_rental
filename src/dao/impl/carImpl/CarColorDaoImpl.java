@@ -18,7 +18,7 @@ public class CarColorDaoImpl implements CarColorDao {
     private static final String CAR_COLOR_ID = "car_color_id";
     private static final String COLOR = "color";
 
-    private static final CarColorDaoImpl INSTANCE = new CarColorDaoImpl();
+    private static CarColorDaoImpl INSTANCE;
 
     private CarColorDaoImpl() {
 
@@ -55,7 +55,7 @@ public class CarColorDaoImpl implements CarColorDao {
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                carColor.setColorCarId(generatedKeys.getLong(CAR_COLOR_ID ));
+                carColor.setColorCarId(generatedKeys.getLong(CAR_COLOR_ID));
             }
             return carColor;
 
@@ -95,8 +95,8 @@ public class CarColorDaoImpl implements CarColorDao {
             CarColor colorCar = null;
             if (resultSet.next()) {
                 colorCar = new CarColor(
-                        resultSet.getLong(CAR_COLOR_ID ),
-                        resultSet.getString(COLOR )
+                        resultSet.getLong(CAR_COLOR_ID),
+                        resultSet.getString(COLOR)
                 );
             }
             return Optional.ofNullable(colorCar);
@@ -124,12 +124,15 @@ public class CarColorDaoImpl implements CarColorDao {
 
     private CarColor buildCarColor(ResultSet resultSet) throws SQLException {
         return new CarColor(
-                resultSet.getLong(CAR_COLOR_ID ),
-                resultSet.getString(COLOR )
+                resultSet.getLong(CAR_COLOR_ID),
+                resultSet.getString(COLOR)
         );
     }
 
-    public static CarColorDaoImpl getInstance() {
+    public static synchronized CarColorDaoImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CarColorDaoImpl();
+        }
         return INSTANCE;
     }
 }

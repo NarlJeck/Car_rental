@@ -1,4 +1,4 @@
-package dto;
+package dto.clientDto;
 
 import entity.client.BankCard;
 import entity.client.DriverLicense;

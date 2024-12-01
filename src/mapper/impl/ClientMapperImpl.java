@@ -1,6 +1,6 @@
 package mapper.impl;
 
-import dto.ClientDto;
+import dto.clientDto.ClientDto;
 import entity.client.Client;
 import mapper.ClientMapper;
 

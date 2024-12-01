@@ -19,7 +19,7 @@ public class CarModelDaoImpl implements CarModelDao {
     private static final String MODEL_CAR_ID = "model_car_id";
     private static final String MODEL = "model";
 
-    private static final CarModelDaoImpl INSTANCE = new CarModelDaoImpl();
+    private static CarModelDaoImpl INSTANCE;
 
     private CarModelDaoImpl() {
     }
@@ -128,7 +128,10 @@ public class CarModelDaoImpl implements CarModelDao {
         );
     }
 
-    public static CarModelDaoImpl getInstance() {
+    public static synchronized CarModelDaoImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CarModelDaoImpl();
+        }
         return INSTANCE;
     }
 }

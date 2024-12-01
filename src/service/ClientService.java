@@ -1,6 +1,6 @@
 package service;
 
-import dto.ClientDto;
+import dto.clientDto.ClientDto;
 
 import java.util.List;
 

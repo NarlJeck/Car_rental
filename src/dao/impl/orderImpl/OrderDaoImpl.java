@@ -26,7 +26,7 @@ public class OrderDaoImpl implements OrderDao {
     private static final String STATUS_ORDER_ID = "status_order_id";
 
 
-    private static final OrderDaoImpl INSTANCE = new OrderDaoImpl();
+    private static OrderDaoImpl INSTANCE;
     private final CarDaoImpl carDaoImpl = CarDaoImpl.getInstance();
     private final ClientDaoImpl clientDaoImpl = ClientDaoImpl.getInstance();
 
@@ -187,6 +187,9 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     public static OrderDaoImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new OrderDaoImpl();
+        }
         return INSTANCE;
     }
 }

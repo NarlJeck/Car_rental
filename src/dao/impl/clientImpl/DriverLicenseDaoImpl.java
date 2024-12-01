@@ -145,7 +145,7 @@ public class DriverLicenseDaoImpl implements DriverLicenseDao {
         }
     }
 
-    public static DriverLicenseDaoImpl getINSTANCE() {
+    public static synchronized DriverLicenseDaoImpl getINSTANCE() {
         if (INSTANCE == null) {
             INSTANCE = new DriverLicenseDaoImpl();
         }

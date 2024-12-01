@@ -1,5 +1,3 @@
-import dao.impl.clientImpl.ClientDaoImpl;
-
 import java.sql.SQLException;
 
 
@@ -9,7 +7,6 @@ public class JDBCRunner {
 
 
 
-        System.out.println(ClientDaoImpl.getInstance().findById(1L));
 
     }
 

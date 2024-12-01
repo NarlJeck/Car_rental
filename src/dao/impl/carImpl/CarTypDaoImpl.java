@@ -21,7 +21,7 @@ public class CarTypDaoImpl implements CarTypDao {
     private CarTypDaoImpl() {
     }
 
-    private static final CarTypDaoImpl INSTANCE = new CarTypDaoImpl();
+    private static CarTypDaoImpl INSTANCE;
 
     private static final String CREATE_SQL = "INSERT INTO type_car(typ) VALUES (?)";
     private static final String FIND_BY_ID_SQL = "SELECT type_car_id," +
@@ -129,6 +129,10 @@ public class CarTypDaoImpl implements CarTypDao {
     }
 
     public CarTypDaoImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CarTypDaoImpl();
+        }
+
         return INSTANCE;
     }
 }

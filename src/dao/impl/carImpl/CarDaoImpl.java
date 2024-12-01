@@ -197,9 +197,9 @@ public class CarDaoImpl implements CarDao {
         );
     }
 
-    public static CarDaoImpl getInstance() {
-        if(INSTANCE==null){
-            INSTANCE= new CarDaoImpl();
+    public static synchronized CarDaoImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CarDaoImpl();
         }
 
         return INSTANCE;

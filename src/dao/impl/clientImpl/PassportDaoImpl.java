@@ -143,11 +143,10 @@ public class PassportDaoImpl implements PassportDao {
         }
     }
 
-    public static PassportDaoImpl getInstance() {
+    public static synchronized PassportDaoImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new PassportDaoImpl();
         }
-
         return INSTANCE;
     }
 }
