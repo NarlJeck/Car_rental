@@ -12,5 +12,5 @@ public class DriverLicenseDto {
 
     private Long DriverLicenseId;
     private String serialNumber;
-    private LocalDateTime expiredData;
+    private String expiredData;
 }

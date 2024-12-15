@@ -16,4 +16,8 @@ public interface CarService {
 
     CarDto create(CarDto carDto);
 
+    List<CarDto> findByModel(String model);
+
+
+
 }

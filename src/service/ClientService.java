@@ -1,18 +1,22 @@
 package service;
 
 import dto.clientDto.ClientDto;
+import dto.clientDto.CreateRegistrationClientDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ClientService {
 
-    ClientDto findById(Long id);
+    CreateRegistrationClientDto findById(Long id);
 
-    List<ClientDto> findAll();
+    List<CreateRegistrationClientDto> findAll();
 
-    void update(ClientDto clientDto);
+    void update(CreateRegistrationClientDto clientDto);
 
-    boolean delete(ClientDto clientDto);
+    boolean delete(CreateRegistrationClientDto clientDto);
 
-    ClientDto create(ClientDto clientDto);
+    Long create(CreateRegistrationClientDto clientDto);
+
+    Optional<ClientDto> login(String email,String password);
 }

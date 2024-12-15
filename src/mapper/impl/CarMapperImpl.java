@@ -2,7 +2,10 @@ package mapper.impl;
 
 import dto.carDto.CarDto;
 import entity.car.Car;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import mapper.CarMapper;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 
 public class CarMapperImpl implements CarMapper {
 

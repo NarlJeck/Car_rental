@@ -3,12 +3,19 @@ package service.impl;
 import dao.clientDao.ClientDao;
 import dao.impl.clientImpl.ClientDaoImpl;
 import dto.clientDto.ClientDto;
+import dto.clientDto.CreateRegistrationClientDto;
 import entity.client.Client;
+import exception.ValidationException;
 import mapper.ClientMapper;
+import mapper.CreateClientMapper;
 import mapper.impl.ClientMapperImpl;
+import mapper.impl.CreateClientMapperImpl;
 import service.ClientService;
+import validator.CreateClientValidator;
+import validator.ValidationResult;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,9 +24,11 @@ public class ClientServiceImpl implements ClientService {
     private static ClientServiceImpl INSTANCE;
 
     private final ClientDao clientDao = ClientDaoImpl.getInstance();
-    private final ClientMapper clientMapper = ClientMapperImpl.getINSTANCE();
+    private final CreateClientMapper createClientMapper = CreateClientMapperImpl.getINSTANCE();
+    private final ClientMapper clientMapper = ClientMapperImpl.getInstance();
+    private final CreateClientValidator createClientValidator = CreateClientValidator.getInstance();
 
-    public static synchronized ClientServiceImpl getINSTANCE() {
+    public static synchronized ClientServiceImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ClientServiceImpl();
         }
@@ -30,37 +39,48 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientDto findById(Long id) {
+    public CreateRegistrationClientDto findById(Long id) {
         return clientDao.findById(id)
-                .map(clientMapper::toDto)
+                .map(createClientMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Can not find client by id"));
     }
 
     @Override
-    public List<ClientDto> findAll() {
+    public List<CreateRegistrationClientDto> findAll() {
 
         return clientDao.findAll()
                 .stream()
-                .map(clientMapper::toDto)
+                .map(createClientMapper::toDto)
                 .collect(toList());
     }
 
     @Override
-    public void update(ClientDto clientDto) {
-        clientDao.update(clientMapper.toEntity(clientDto));
+    public void update(CreateRegistrationClientDto clientDto) {
+        clientDao.update(createClientMapper.toEntity(clientDto));
 
     }
 
     @Override
-    public boolean delete(ClientDto clientDto) {
-      return clientDao.delete(clientDto.getClientId());
+    public boolean delete(CreateRegistrationClientDto clientDto) {
+        return false;
     }
 
     @Override
-    public ClientDto create(ClientDto clientDto) {
-        Client client = clientDao.create(clientMapper.toEntity(clientDto));
-        return clientMapper.toDto(client);
+    public Long create(CreateRegistrationClientDto clientDto) {
+        var validationResult = createClientValidator.isValid(clientDto);
+        if(!validationResult.isValid()){
+            throw new ValidationException(validationResult.getErrors());
+        }
+        Client client = createClientMapper.toEntity(clientDto);
+        clientDao.createRegistration(client);
 
+        return client.getClientId();
 
+    }
+
+    @Override
+    public Optional<ClientDto> login(String email, String password) {
+        return clientDao.findByEmailAndPassword(email,password)
+                .map(clientMapper::toDto);
     }
 }

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class ClientDto {
     private Long clientId;
     private String fullName;
@@ -24,4 +23,5 @@ public class ClientDto {
     private Passport passport;
     private DriverLicense driverLicense;
     private BankCard bankCard;
+
 }

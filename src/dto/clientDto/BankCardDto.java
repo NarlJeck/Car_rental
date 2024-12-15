@@ -16,5 +16,5 @@ public class BankCardDto {
 
     private Long bankCardId;
     private String serialNumber;
-    private LocalDateTime expiredData;
+    private String expiredData;
 }

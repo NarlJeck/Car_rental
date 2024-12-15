@@ -8,15 +8,28 @@
 <body>
 <h1>Автомобили</h1>
 <ul>
+    <li>
     <c:forEach var="car" items="${requestScope.cars}">
 
-        <p>
+        ID: ${car.carId}
 
-                ${car}
+        Year: ${car.year}
 
-        </p>
+        Seats: ${car.numberSeats}
+
+        Price: ${car.rentalPricePerDay}
+
+        Registration: ${car.registrationNumber}
+
+        Color: ${car.carColor.color}
+
+        Model: ${car.modelCar.model}
+
+        Status : ${car.statusCar.status}
+
+        Type : ${car.typCar.type}
+        </li >
     </c:forEach>
-
 </ul>
 
 </body>

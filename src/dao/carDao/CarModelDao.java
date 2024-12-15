@@ -5,4 +5,5 @@ import entity.car.CarModel;
 
 public interface CarModelDao extends BaseCrudDao<Long, CarModel> {
 
+
 }

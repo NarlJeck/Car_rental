@@ -20,7 +20,7 @@
             <li><strong>Модель авто:</strong> ${car.getModel}</li>
         </tr>
         <tr>
-            <li><strong>Имя:</strong> ${client.getName}</li>
+            <li><strong>Имя:</strong> ${client.fullName}</li>
         </tr>
         <tr>
             <td><label for="startDate">Дата начала аренды:</label></td>
@@ -46,8 +46,8 @@
 </form>
 
 
-<form action="carsMain.jsp.jsp" method="get">
-    <input type="submit" value="Назад" />
+<form action="main" method="get">
+    <input type="submit" value="На главную" />
 </form>
 
 </body>

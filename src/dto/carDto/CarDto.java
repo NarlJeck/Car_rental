@@ -1,18 +1,21 @@
 package dto.carDto;
 
 import entity.car.CarColor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import entity.car.CarModel;
+import entity.car.CarStatus;
+import entity.car.CarTyp;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@Builder
+@ToString
 
 public class CarDto {
     private Long carId;
@@ -27,9 +30,9 @@ public class CarDto {
 
     private CarColor carColor;
 
-    private Long modelCarId;
+    private CarModel modelCar;
 
-    private Long statusCarId;
+    private CarStatus statusCar;
 
-    private Long typCarId;
+    private CarTyp typCar;
 }

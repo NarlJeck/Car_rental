@@ -31,7 +31,9 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public CarDto findById(Long id) {
-        return null;
+        return carDao.findById(id)
+                .map(carMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Can not find car by id"));
     }
 
     @Override
@@ -57,4 +59,14 @@ public class CarServiceImpl implements CarService {
     public CarDto create(CarDto carDto) {
         return null;
     }
+
+    @Override
+    public List<CarDto> findByModel(String model) {
+      return   carDao.findByModel(model)
+              .stream()
+              .map(carMapper::toDto)
+              .collect(toList());
+    }
+
+
 }

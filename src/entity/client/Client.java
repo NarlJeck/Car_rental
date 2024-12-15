@@ -20,6 +20,7 @@ public class Client {
     private Passport passport;
     private DriverLicense driverLicense;
     private BankCard bankCard;
+    private String password;
 
 
 

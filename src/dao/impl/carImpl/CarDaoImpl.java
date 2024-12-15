@@ -3,7 +3,6 @@ package dao.impl.carImpl;
 import dao.carDao.CarDao;
 import entity.car.Car;
 import exception.DaoException;
-import lombok.Getter;
 import util.ConnectionManager;
 
 import java.sql.*;
@@ -73,7 +72,25 @@ public class CarDaoImpl implements CarDao {
                     "type_id " +
                     "FROM car WHERE car_id =?";
 
+    private static final String FIND_ALL_CAR_BY_MODEl =
+            "SELECT car_id," +
+                    " year," +
+                    "number_seats," +
+                    "rental_price_per_day," +
+                    "registration_number," +
+                    "color_id," +
+                    "model_id," +
+                    "status_id," +
+                    "type_id " +
+                    "FROM car " +
+                    "JOIN model_car ON model_id=model_car_id " +
+                    "WHERE model_car.model=?";
+
+
     private final CarColorDaoImpl carColorDao = CarColorDaoImpl.getInstance();
+    private final CarModelDaoImpl carModelDao = CarModelDaoImpl.getInstance();
+    private final CarStatusDaoImpl carStatusDao = CarStatusDaoImpl.getINSTANCE();
+    private final CarTypDaoImpl carTypDao = CarTypDaoImpl.getInstance();
 
     public Car create(Car car) {
         try (var connection = ConnectionManager.get();
@@ -83,9 +100,9 @@ public class CarDaoImpl implements CarDao {
             preparedStatement.setBigDecimal(3, car.getRentalPricePerDay());
             preparedStatement.setString(4, car.getRegistrationNumber());
             preparedStatement.setLong(5, car.getCarColor().getColorCarId());
-            preparedStatement.setLong(6, car.getModelCarId());
-            preparedStatement.setLong(7, car.getStatusCarId());
-            preparedStatement.setLong(8, car.getTypCarId());
+            preparedStatement.setLong(6, car.getModelCar().getModelCarId());
+            preparedStatement.setLong(7, car.getStatusCar().getStatusCarId());
+            preparedStatement.setLong(8, car.getTypCar().getTypeCarId());
 
             preparedStatement.executeUpdate();
 
@@ -119,9 +136,9 @@ public class CarDaoImpl implements CarDao {
             preparedStatement.setBigDecimal(3, car.getRentalPricePerDay());
             preparedStatement.setString(4, car.getRegistrationNumber());
             preparedStatement.setLong(5, car.getCarColor().getColorCarId());
-            preparedStatement.setLong(6, car.getModelCarId());
-            preparedStatement.setLong(7, car.getStatusCarId());
-            preparedStatement.setLong(8, car.getTypCarId());
+            preparedStatement.setLong(6, car.getModelCar().getModelCarId());
+            preparedStatement.setLong(7, car.getStatusCar().getStatusCarId());
+            preparedStatement.setLong(8, car.getTypCar().getTypeCarId());
             preparedStatement.setLong(9, car.getCarId());
 
             preparedStatement.executeUpdate();
@@ -154,10 +171,14 @@ public class CarDaoImpl implements CarDao {
                         resultSet.getString(REGISTRATION_NUMBER),
                         carColorDao.findById(resultSet.getLong(COLOR_CAR_ID),
                                 resultSet.getStatement().getConnection()).orElse(null),
-                        resultSet.getLong(MODEL_ID),
-                        resultSet.getLong(STATUS_ID),
-                        resultSet.getLong(TYPE_ID)
+                        carModelDao.findById(resultSet.getLong(MODEL_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        carStatusDao.findById(resultSet.getLong(STATUS_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        carTypDao.findById(resultSet.getLong(TYPE_ID),
+                                resultSet.getStatement().getConnection()).orElse(null)
                 );
+
             }
             return Optional.ofNullable(car);
         } catch (SQLException e) {
@@ -191,9 +212,12 @@ public class CarDaoImpl implements CarDao {
                 resultSet.getString(REGISTRATION_NUMBER),
                 carColorDao.findById(resultSet.getLong(COLOR_CAR_ID),
                         resultSet.getStatement().getConnection()).orElse(null),
-                resultSet.getLong(MODEL_ID),
-                resultSet.getLong(STATUS_ID),
-                resultSet.getLong(TYPE_ID)
+                carModelDao.findById(resultSet.getLong(MODEL_ID),
+                        resultSet.getStatement().getConnection()).orElse(null),
+                carStatusDao.findById(resultSet.getLong(STATUS_ID),
+                        resultSet.getStatement().getConnection()).orElse(null),
+                carTypDao.findById(resultSet.getLong(TYPE_ID),
+                        resultSet.getStatement().getConnection()).orElse(null)
         );
     }
 
@@ -204,4 +228,40 @@ public class CarDaoImpl implements CarDao {
 
         return INSTANCE;
     }
+
+
+    @Override
+    public List<Car> findByModel(String model) {
+        try (var connection = ConnectionManager.get();
+             var prepareStatement = connection.prepareStatement(FIND_ALL_CAR_BY_MODEl)) {
+            prepareStatement.setString(1, model);
+
+            ResultSet resultSet = prepareStatement.executeQuery();
+            List<Car> carsId = new ArrayList<>();
+            Car car = null;
+            if (resultSet.next()) {
+                car = new Car(
+                        resultSet.getLong(CAR_ID),
+                        resultSet.getTimestamp(YEAR).toLocalDateTime(),
+                        resultSet.getInt(NUMBER_SEATS),
+                        resultSet.getBigDecimal(RENTAL_PRICE_PER_DAY),
+                        resultSet.getString(REGISTRATION_NUMBER),
+                        carColorDao.findById(resultSet.getLong(COLOR_CAR_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        carModelDao.findById(resultSet.getLong(MODEL_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        carStatusDao.findById(resultSet.getLong(STATUS_ID),
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        carTypDao.findById(resultSet.getLong(TYPE_ID),
+                                resultSet.getStatement().getConnection()).orElse(null));
+                carsId.add(car);
+
+            }
+            return carsId;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+
 }
