@@ -128,7 +128,7 @@ public class CarTypDaoImpl implements CarTypDao {
         );
     }
 
-    public CarTypDaoImpl getInstance() {
+    public static synchronized CarTypDaoImpl getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new CarTypDaoImpl();
         }

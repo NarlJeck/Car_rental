@@ -3,8 +3,6 @@ package dao.impl.clientImpl;
 import dao.clientDao.ClientDao;
 import entity.client.Client;
 import exception.DaoException;
-import lombok.Getter;
-import lombok.ToString;
 import util.ConnectionManager;
 
 import java.sql.Connection;
@@ -25,6 +23,8 @@ public class ClientDaoImpl implements ClientDao {
     private static final String PASSPORT_ID = "passport_id";
     private static final String DRIVER_LICENSE_ID = "driver_license_id";
     private static final String BANK_CARD_ID = "bank_card_id";
+    private static final String PASSWORD = "password";
+    private static final String DEFAULT_ROLE_CLIENT_REGISTRATION = "USER";
 
     private static ClientDaoImpl INSTANCE;
 
@@ -39,6 +39,7 @@ public class ClientDaoImpl implements ClientDao {
 
     private static final String DELETE_SQL = "DELETE FROM client WHERE client_id = ?";
 
+    //language=PostgreSQL
     private static final String CREATE_SQL = "INSERT INTO client(" +
             "full_name," +
             " phone_number, " +
@@ -47,8 +48,19 @@ public class ClientDaoImpl implements ClientDao {
             " role_id," +
             " passport_id,       " +
             " driver_license_id," +
-            "bank_card_id)" +
-            "VALUES (?,?,?,?,?,?,?,?)";
+            "bank_card_id," +
+            "password)" +
+            "VALUES (?,?,?,?,?,?,?,?,?)";
+
+    private static final String CREATE_SQL_REGISTRATION = "INSERT INTO client(" +
+            "full_name," +
+            " phone_number, " +
+            "email," +
+            " residential_address," +
+            "role_id, " +
+            "password)" +
+            "VALUES (?,?,?,?,?,?)";
+
 
     private static final String UPDATE_SQL = "UPDATE client " +
             "SET full_name = ?," +
@@ -69,7 +81,8 @@ public class ClientDaoImpl implements ClientDao {
             "role_id," +
             "passport_id," +
             "driver_license_id," +
-            "bank_card_id " +
+            "bank_card_id," +
+            "password " +
             "FROM client";
 
     private static final String FIND_BY_ID_SQL =
@@ -81,9 +94,25 @@ public class ClientDaoImpl implements ClientDao {
                     "role_id," +
                     "passport_id," +
                     "driver_license_id," +
-                    "bank_card_id " +
+                    "bank_card_id," +
+                    "password " +
                     "FROM client WHERE client_id =?";
 
+    private static final String GET_BY_NAME_ROLE =
+            "SELECT role_id FROM role where role.role = ?";
+
+    private static final String GET_BY_EMAIL_AND_PASSWORD =
+            "SELECT client_id," +
+                    " full_name," +
+                    "phone_number," +
+                    "email," +
+                    "residential_address," +
+                    "role_id," +
+                    "passport_id," +
+                    "driver_license_id," +
+                    "bank_card_id," +
+                    "password " +
+                    "FROM client WHERE email =? AND password = ?";
 
     @Override
     public boolean delete(Long id) {
@@ -110,6 +139,7 @@ public class ClientDaoImpl implements ClientDao {
             prepareStation.setLong(6, client.getPassport().getPassportId());
             prepareStation.setLong(7, client.getDriverLicense().getDriverLicenseId());
             prepareStation.setLong(8, client.getBankCard().getBankCardId());
+            prepareStation.setString(9, client.getPassword());
 
             prepareStation.executeUpdate();
 
@@ -175,8 +205,8 @@ public class ClientDaoImpl implements ClientDao {
                         driverLicenseDao.findById(resultSet.getLong(DRIVER_LICENSE_ID),
                                 resultSet.getStatement().getConnection()).orElse(null),
                         bankCardDao.findById(resultSet.getLong(BANK_CARD_ID),
-                                resultSet.getStatement().getConnection()).orElse(null)
-                );
+                                resultSet.getStatement().getConnection()).orElse(null),
+                        resultSet.getString(PASSWORD));
             }
             return Optional.ofNullable(client);
         } catch (SQLException e) {
@@ -184,6 +214,7 @@ public class ClientDaoImpl implements ClientDao {
         }
 
     }
+
 
     @Override
     public List<Client> findAll() {
@@ -215,7 +246,8 @@ public class ClientDaoImpl implements ClientDao {
                 driverLicenseDao.findById(resultSet.getLong(DRIVER_LICENSE_ID),
                         resultSet.getStatement().getConnection()).orElse(null),
                 bankCardDao.findById(resultSet.getLong(BANK_CARD_ID),
-                        resultSet.getStatement().getConnection()).orElse(null));
+                        resultSet.getStatement().getConnection()).orElse(null),
+                resultSet.getString(PASSWORD));
     }
 
     public static synchronized ClientDaoImpl getInstance() {
@@ -223,6 +255,82 @@ public class ClientDaoImpl implements ClientDao {
             INSTANCE = new ClientDaoImpl();
         }
         return INSTANCE;
+    }
+
+
+    @Override
+    public Client createRegistration(Client clientRegistration) {
+        try (var connection = ConnectionManager.get();
+             var prepareStation = connection.prepareStatement(CREATE_SQL_REGISTRATION)) {
+            prepareStation.setString(1, clientRegistration.getFullName());
+            prepareStation.setInt(2, clientRegistration.getPhoneNumber());
+            prepareStation.setString(3, clientRegistration.getEmail());
+            prepareStation.setString(4, clientRegistration.getResidentialAddress());
+            prepareStation.setLong(5, findByNameRole(DEFAULT_ROLE_CLIENT_REGISTRATION));
+            prepareStation.setString(6, clientRegistration.getPassword());
+
+            prepareStation.executeUpdate();
+
+            var generatedKeys = prepareStation.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                clientRegistration.setClientId(generatedKeys.getLong(CLIENT_ID));
+            }
+            return clientRegistration;
+        } catch (SQLException e) {
+            throw new DaoException("Exception clientDao - method(createRegistration)", e);
+        }
+    }
+
+    @Override
+    public Long findByNameRole(String nameRole) {
+        try (var connection = ConnectionManager.get();
+             var prepareStation = connection.prepareStatement(GET_BY_NAME_ROLE)) {
+            prepareStation.setString(1, nameRole);
+            ResultSet resultSet = prepareStation.executeQuery();
+            Long idRole = null;
+            if (resultSet.next()) {
+                idRole = resultSet.getLong(ROLE_ID);
+
+            }
+            return idRole;
+
+        } catch (SQLException e) {
+            throw new DaoException("Exception clientDao -method(findByNameRole)", e);
+        }
+    }
+
+    @Override
+    public Optional<Client> findByEmailAndPassword(String email, String password) {
+        try(var connection = ConnectionManager.get();
+            var prepareStatement = connection.prepareStatement(GET_BY_EMAIL_AND_PASSWORD)){
+            prepareStatement.setString(1,email);
+            prepareStatement.setString(2,password);
+
+            ResultSet resultSet = prepareStatement.executeQuery();
+            Client client = null;
+            if(resultSet.next()){
+                client =Client.builder()
+                        .clientId(resultSet.getLong(CLIENT_ID))
+                        .fullName(resultSet.getString(FULL_NAME))
+                        .phoneNumber(resultSet.getInt(PHONE_NUMBER))
+                        .email(resultSet.getString(EMAIL))
+                        .residentialAddress(resultSet.getString(RESIDENTIAL_ADDRESS))
+                        .role(roleDao.findById(resultSet.getLong(ROLE_ID),
+                                resultSet.getStatement().getConnection()).orElse(null))
+                        .passport(passportDao.findById(resultSet.getLong(PASSPORT_ID),
+                                resultSet.getStatement().getConnection()).orElse(null))
+                        .driverLicense(driverLicenseDao.findById(resultSet.getLong(DRIVER_LICENSE_ID),
+                                resultSet.getStatement().getConnection()).orElse(null))
+                        .bankCard(bankCardDao.findById(resultSet.getLong(BANK_CARD_ID),
+                                resultSet.getStatement().getConnection()).orElse(null))
+                        .password(resultSet.getString(PASSWORD))
+                        .build();
+            }
+    return Optional.ofNullable(client);
+        } catch (SQLException e) {
+            throw new DaoException("Exception clientDao -method(findByEmailAndPassword)", e);
+
+        }
     }
 
 

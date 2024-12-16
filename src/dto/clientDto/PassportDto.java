@@ -14,5 +14,5 @@ import java.time.LocalDateTime;
 public class PassportDto {
     private Long passportId;
     private String serialNumber;
-    private LocalDateTime expiredData;
+    private String expiredData;
 }

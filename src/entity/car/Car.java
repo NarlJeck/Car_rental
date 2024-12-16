@@ -5,8 +5,9 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
+
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -28,11 +29,11 @@ public class Car {
 
     private CarColor carColor;
 
-    private Long modelCarId;
+    private CarModel modelCar;
 
-    private Long statusCarId;
+    private CarStatus statusCar;
 
-    private Long typCarId;
+    private CarTyp typCar;
 
 
 }
