@@ -301,15 +301,15 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public Optional<Client> findByEmailAndPassword(String email, String password) {
-        try(var connection = ConnectionManager.get();
-            var prepareStatement = connection.prepareStatement(GET_BY_EMAIL_AND_PASSWORD)){
-            prepareStatement.setString(1,email);
-            prepareStatement.setString(2,password);
+        try (var connection = ConnectionManager.get();
+             var prepareStatement = connection.prepareStatement(GET_BY_EMAIL_AND_PASSWORD)) {
+            prepareStatement.setString(1, email);
+            prepareStatement.setString(2, password);
 
             ResultSet resultSet = prepareStatement.executeQuery();
             Client client = null;
-            if(resultSet.next()){
-                client =Client.builder()
+            if (resultSet.next()) {
+                client = Client.builder()
                         .clientId(resultSet.getLong(CLIENT_ID))
                         .fullName(resultSet.getString(FULL_NAME))
                         .phoneNumber(resultSet.getInt(PHONE_NUMBER))
@@ -326,7 +326,7 @@ public class ClientDaoImpl implements ClientDao {
                         .password(resultSet.getString(PASSWORD))
                         .build();
             }
-    return Optional.ofNullable(client);
+            return Optional.ofNullable(client);
         } catch (SQLException e) {
             throw new DaoException("Exception clientDao -method(findByEmailAndPassword)", e);
 

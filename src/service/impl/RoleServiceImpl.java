@@ -9,7 +9,6 @@ import mapper.impl.RoleMapperImpl;
 import service.RoleService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

@@ -21,17 +21,11 @@
                 //здеь придумать отображать все машины выбранной модели
             }
         </script>
-        <button onclick="alert('Вы выбрали марку: Toyota')">Toyota</button>
         <select name="model" id="model" onchange="handleSelectChange(model)">
             <c:forEach var="model" items="${requestScope.carModels}">
                 <option value=${fn:toUpperCase(model.model)}>${fn:toUpperCase(model.model)}</option>
-
-
             </c:forEach>
-
         </select>
-
-
     </nav>
 </header>
 

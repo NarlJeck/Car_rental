@@ -19,7 +19,8 @@
 </ul>
 
 <form action="order" method="get">
-    <input type="submit" value="Забронировать" />
+    <input type="hidden" name="carId" value="${requestScope.carCurrent.carId}" />
+    <input type="submit" value="Забронировать"  />
 </form>
 
 <form action="main" method="get">

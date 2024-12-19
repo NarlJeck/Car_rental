@@ -18,8 +18,19 @@ public class ClientMapperImpl implements ClientMapper {
         return INSTANCE;
     }
     @Override
-    public Client toEntity(ClientDto dto) {
-        return null;
+    public Client toEntity(ClientDto dto)
+    {
+        return Client.builder()
+                .clientId(dto.getClientId())
+                .fullName(dto.getFullName())
+                .phoneNumber(dto.getPhoneNumber())
+                .email(dto.getEmail())
+                .residentialAddress(dto.getResidentialAddress())
+                .role(dto.getRole())
+                .passport(dto.getPassport())
+                .driverLicense(dto.getDriverLicense())
+                .bankCard(dto.getBankCard())
+                .build();
     }
 
     @Override

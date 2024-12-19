@@ -10,10 +10,10 @@ public interface OrderService {
 
     List<OrderRentalDto> findAll();
 
-    void update(OrderRentalDto carDto);
+    void update(OrderRentalDto orderRentalDto);
 
-    boolean delete(OrderRentalDto carDto);
+    boolean delete(OrderRentalDto orderRentalDto);
 
-    OrderRentalDto create(OrderRentalDto carDto);
+    Long create(OrderRentalDto orderRentalDto);
 
 }

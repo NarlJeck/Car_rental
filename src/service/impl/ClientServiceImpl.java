@@ -12,7 +12,6 @@ import mapper.impl.ClientMapperImpl;
 import mapper.impl.CreateClientMapperImpl;
 import service.ClientService;
 import validator.CreateClientValidator;
-import validator.ValidationResult;
 
 import java.util.List;
 import java.util.Optional;

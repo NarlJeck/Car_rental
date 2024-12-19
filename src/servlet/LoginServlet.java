@@ -22,26 +22,27 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher(JspHelper.getPath(Path.LOGIN.getPath()))
-        .forward(req,resp);
+                .forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        clientService.login(  req.getParameter("email"),req.getParameter("password"))
+        clientService.login(req.getParameter("email"), req.getParameter("password"))
                 .ifPresentOrElse(
-                        client ->onLoginSuccess(client,req,resp),
-                        ()->onLoginFail(req,resp)
+                        client -> onLoginSuccess(client, req, resp),
+                        () -> onLoginFail(req, resp)
                 );
-    }
-    @SneakyThrows
-    private void onLoginFail(HttpServletRequest request, HttpServletResponse response){
-        response.sendRedirect("/login?error&email="+request.getParameter("email"));
     }
 
     @SneakyThrows
-    private void onLoginSuccess(ClientDto client, HttpServletRequest request,HttpServletResponse response){
-        request.getSession().setAttribute("client",client);
+    private void onLoginFail(HttpServletRequest request, HttpServletResponse response) {
+        response.sendRedirect("/login?error&email=" + request.getParameter("email"));
+    }
+
+    @SneakyThrows
+    private void onLoginSuccess(ClientDto client, HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().setAttribute("client", client);
         response.sendRedirect("/main");
     }
 }

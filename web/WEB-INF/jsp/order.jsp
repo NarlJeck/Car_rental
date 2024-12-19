@@ -10,44 +10,52 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <%@include file="header.jsp" %>
     <title>Заказ аренды автомобиля</title>
 </head>
 <body>
 <h1>Оформление заказа</h1>
-<form action="calculateCost" method="post">
+<form action="${pageContext.request.contextPath}/order" method="post">
     <table>
         <tr>
-            <li><strong>Модель авто:</strong> ${car.getModel}</li>
+            <li><strong>Модель авто:</strong> ${carOrder.modelCar.model}</li>
         </tr>
         <tr>
-            <li><strong>Имя:</strong> ${client.fullName}</li>
+
+            <li><strong>Имя:</strong><c:if test="${client.fullName == null}">
+                ${clientName}
+            </c:if> ${client.fullName}</li>
         </tr>
         <tr>
             <td><label for="startDate">Дата начала аренды:</label></td>
-            <td><input type="date" id="startDate" name="startDate" required /></td>
+            <td><input type="date" id="startDate" name="startDate" required/></td>
         </tr>
         <tr>
             <td><label for="endDate">Дата окончания аренды:</label></td>
-            <td><input type="date" id="endDate" name="endDate" required /></td>
-        </tr>
-        <tr>
-            <td><input type="submit" value="Рассчитать стоимость" /></td>
-            <td>
-                <span id="Cost">0</span>
-            </td>
+            <td><input type="date" id="endDate" name="endDate" required/></td>
         </tr>
     </table>
-</form>
+    <c:if test="${not empty sessionScope.client}">
 
-<form action="confirmOrder" method="post">
-    <input type="hidden" name="startDate" id="confirmStartDate" />
-    <input type="hidden" name="endDate" id="confirmEndDate" />
-    <input type="submit" value="Подтвердить заказ" />
-</form>
+        <button type="submit">Подтвердить</button>
 
+    </c:if>
+    <div style="color: #e87d0b">
+        <td><label> Чтобы подтвердить бронь необходимо зарегестрироваться </label></td>
+    </div>
+    <c:if test="${not empty requestScope.errors}">
+        <div style="color: red">
+            <c:forEach var="error" items="${requestScope.errors}">
+                <span>${error.message}</span>
+                <br>
+            </c:forEach>
+        </div>
+    </c:if>
+    <input type="hidden" name="carId" value="${requestScope.carOrder.carId}"/>
+</form>
 
 <form action="main" method="get">
-    <input type="submit" value="На главную" />
+    <input type="submit" value="На главную"/>
 </form>
 
 </body>

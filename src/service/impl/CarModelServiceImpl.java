@@ -3,12 +3,12 @@ package service.impl;
 import dao.carDao.CarModelDao;
 import dao.impl.carImpl.CarModelDaoImpl;
 import dto.carDto.CarModelDto;
+import exception.ServiceException;
 import mapper.CarModelMapper;
 import mapper.impl.CarModelMapperImpl;
 import service.CarModelService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -34,7 +34,7 @@ public class CarModelServiceImpl implements CarModelService {
     public CarModelDto findById(Long id) {
         return carModelDao.findById(id)
                 .map(carModelMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Can not find car by id"));
+                .orElseThrow(() -> new ServiceException("Can not find car by id"));
     }
 
     @Override

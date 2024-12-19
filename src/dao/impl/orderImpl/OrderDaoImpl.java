@@ -27,8 +27,10 @@ public class OrderDaoImpl implements OrderDao {
 
 
     private static OrderDaoImpl INSTANCE;
+
     private final CarDaoImpl carDaoImpl = CarDaoImpl.getInstance();
     private final ClientDaoImpl clientDaoImpl = ClientDaoImpl.getInstance();
+    private final StatusOrderDaoImpl statusOrderDao = StatusOrderDaoImpl.getInstance();
 
     private static final String DELETE_SQL = "DELETE FROM order_rental WHERE order_rental_id = ?";
     private static final String CREATE_SQL = "INSERT INTO order_rental(" +
@@ -85,10 +87,10 @@ public class OrderDaoImpl implements OrderDao {
              var preparedStatement = connection.prepareStatement(CREATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, orderRental.getClient().getClientId());
             preparedStatement.setLong(2, orderRental.getCar().getCarId());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(orderRental.getRentalStartDate()));
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(orderRental.getRentalEndDate()));
+            preparedStatement.setDate(3, Date.valueOf(orderRental.getRentalStartDate()));
+            preparedStatement.setDate(4, Date.valueOf((orderRental.getRentalEndDate())));
             preparedStatement.setBigDecimal(5, orderRental.getTotalRentalCost());
-            preparedStatement.setLong(6, orderRental.getStatusOrderId());
+            preparedStatement.setLong(6, orderRental.getStatusOrder().getStatusOrderId());
 
             preparedStatement.executeUpdate();
 
@@ -109,10 +111,10 @@ public class OrderDaoImpl implements OrderDao {
              var preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setLong(1, orderRental.getClient().getClientId());
             preparedStatement.setLong(2, orderRental.getCar().getCarId());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(orderRental.getRentalStartDate()));
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(orderRental.getRentalEndDate()));
+            preparedStatement.setDate(3, Date.valueOf(orderRental.getRentalStartDate()));
+            preparedStatement.setDate(4, Date.valueOf((orderRental.getRentalEndDate())));
             preparedStatement.setBigDecimal(5, orderRental.getTotalRentalCost());
-            preparedStatement.setLong(6, orderRental.getStatusOrderId());
+            preparedStatement.setLong(6, orderRental.getStatusOrder().getStatusOrderId());
             preparedStatement.setLong(7, orderRental.getOrderRentalId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -142,11 +144,11 @@ public class OrderDaoImpl implements OrderDao {
                                 resultSet.getStatement().getConnection()).orElse(null),
                         carDaoImpl.findById(resultSet.getLong(ID_CAR),
                                 resultSet.getStatement().getConnection()).orElse(null),
-                        resultSet.getTimestamp(RENTAL_START_DATE).toLocalDateTime(),
-                        resultSet.getTimestamp(RENTAL_END_DATE).toLocalDateTime(),
+                        resultSet.getDate(RENTAL_START_DATE).toLocalDate(),
+                        resultSet.getDate(RENTAL_END_DATE).toLocalDate(),
                         resultSet.getBigDecimal(TOTAL_RENTAL_COST),
-                        resultSet.getLong(STATUS_ORDER_ID)
-                );
+                        statusOrderDao.findById(resultSet.getLong(STATUS_ORDER_ID),
+                                resultSet.getStatement().getConnection()).orElse(null));
 
             }
             return Optional.ofNullable(orderRental);
@@ -179,10 +181,11 @@ public class OrderDaoImpl implements OrderDao {
                         resultSet.getStatement().getConnection()).orElse(null),
                 carDaoImpl.findById(resultSet.getLong(ID_CAR),
                         resultSet.getStatement().getConnection()).orElse(null),
-                resultSet.getTimestamp(RENTAL_START_DATE).toLocalDateTime(),
-                resultSet.getTimestamp(RENTAL_END_DATE).toLocalDateTime(),
+                resultSet.getDate(RENTAL_START_DATE).toLocalDate(),
+                resultSet.getDate(RENTAL_END_DATE).toLocalDate(),
                 resultSet.getBigDecimal(TOTAL_RENTAL_COST),
-                resultSet.getLong(STATUS_ORDER_ID));
+                statusOrderDao.findById(resultSet.getLong(STATUS_ORDER_ID),
+                resultSet.getStatement().getConnection()).orElse(null));
 
     }
 

@@ -23,7 +23,7 @@ public class CarServlet extends HttpServlet {
         req.setAttribute("carCurrent",carService.findById(carId));
         req.getRequestDispatcher(JspHelper.getPath(Path.CAR.getPath()))
                 .forward(req, resp);
-        System.out.println(carService.findById(carId));
+//        System.out.println(carService.findById(carId));
     }
 
 

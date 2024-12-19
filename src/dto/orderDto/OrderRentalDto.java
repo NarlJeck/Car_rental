@@ -1,7 +1,10 @@
 package dto.orderDto;
 
+import dto.carDto.CarDto;
+import dto.clientDto.ClientDto;
 import entity.car.Car;
 import entity.client.Client;
+import entity.order.StatusOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +19,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderRentalDto {
     private Long orderRentalId;
-    private Client client;
-    private Car car;
-    private LocalDateTime rentalStartDate;
-    private LocalDateTime rentalEndDate;
-    private BigDecimal totalRentalCost;
-    private Long statusOrderId;
+    private ClientDto client;
+    private CarDto car;
+    private String rentalStartDate;
+    private String rentalEndDate;
+    private String totalRentalCost;
+    private StatusOrder statusOrder;
 }
