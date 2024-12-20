@@ -1,11 +1,6 @@
 package dao.impl.carImpl;
 
 import dao.impl.clientImpl.*;
-import entity.client.*;
-import util.Path;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {

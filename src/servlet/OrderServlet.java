@@ -4,7 +4,6 @@ import dao.impl.orderImpl.StatusOrderDaoImpl;
 import dao.orderDao.StatusOrderDao;
 import dto.clientDto.ClientDto;
 import dto.orderDto.OrderRentalDto;
-import entity.order.OrderRental;
 import entity.order.StatusOrder;
 import exception.ValidationException;
 import jakarta.servlet.ServletException;
@@ -13,20 +12,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import mapper.OrderMapper;
-import mapper.impl.OrderMapperImpl;
 import service.CarService;
 import service.OrderService;
 import service.impl.CarServiceImpl;
 import service.impl.OrderServiceImpl;
 import util.JspHelper;
-import util.Path;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Optional;
 
-@WebServlet("/order")
+import static util.UrlPath.ORDER;
+import static util.UrlPath.PERSONAL_ACCOUNT;
+
+@WebServlet(ORDER)
 public class OrderServlet extends HttpServlet {
     private final CarService carService = CarServiceImpl.getInstance();
     private final OrderService orderService = OrderServiceImpl.getInstance();
@@ -44,14 +42,14 @@ public class OrderServlet extends HttpServlet {
         } else
             req.setAttribute("clientName", "Guest");
 
-        req.getRequestDispatcher(JspHelper.getPath(Path.ORDER.getPath()))
+        req.getRequestDispatcher(JspHelper.getPath(ORDER))
                 .forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        req.getRequestDispatcher(JspHelper.getPath(Path.ORDER.getPath()));
+        req.getRequestDispatcher(JspHelper.getPath(ORDER));
 
         var carId = Long.valueOf(req.getParameter("carId"));
         req.setAttribute("carOrder", carService.findById(carId));
@@ -69,7 +67,7 @@ public class OrderServlet extends HttpServlet {
                 .build();
         try {
             orderService.create(orderRentalDto);
-            resp.sendRedirect("/personalAccount");
+            resp.sendRedirect(PERSONAL_ACCOUNT);
         } catch (ValidationException exception) {
             System.out.println("ВСЕ ERROR в SERVLET" + exception.getErrors());
 

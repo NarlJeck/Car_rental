@@ -12,7 +12,9 @@ import service.impl.RoleServiceImpl;
 
 import java.io.IOException;
 
-@WebServlet("/client")
+import static util.UrlPath.CLIENT;
+
+@WebServlet(CLIENT)
 public class ClientServlet extends HttpServlet {
 
     ClientService clientService = ClientServiceImpl.getInstance();

@@ -13,12 +13,13 @@ import service.CarService;
 import service.impl.CarModelServiceImpl;
 import service.impl.CarServiceImpl;
 import util.JspHelper;
-import util.Path;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/main")
+import static util.UrlPath.*;
+
+@WebServlet(MAIN)
 public class MainServlet extends HttpServlet {
 
     private final CarService carService = CarServiceImpl.getInstance();
@@ -30,18 +31,16 @@ public class MainServlet extends HttpServlet {
     }
 
 
-
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<CarDto> carDtoList = carService.findAll();
         List<CarModelDto> carModelAll = carModelService.findAll();
 
-        request.setAttribute("carModels",carModelAll);
+        request.setAttribute("carModels", carModelAll);
         request.setAttribute("cars", carDtoList);
 
-        request.getRequestDispatcher(JspHelper.getPath(Path.MAIN.getPath()))
+        request.getRequestDispatcher(JspHelper.getPath(CARS_MAIN))
                 .forward(request, response);
     }
-
 
     @Override
     public void destroy() {

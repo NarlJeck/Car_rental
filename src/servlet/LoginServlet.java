@@ -10,18 +10,20 @@ import lombok.SneakyThrows;
 import service.ClientService;
 import service.impl.ClientServiceImpl;
 import util.JspHelper;
-import util.Path;
 
 import java.io.IOException;
 
-@WebServlet("/login")
+import static util.UrlPath.*;
+
+@WebServlet(LOGIN)
 public class LoginServlet extends HttpServlet {
 
     private final ClientService clientService = ClientServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher(JspHelper.getPath(Path.LOGIN.getPath()))
+
+        req.getRequestDispatcher(JspHelper.getPath(LOGIN))
                 .forward(req, resp);
     }
 
@@ -43,6 +45,11 @@ public class LoginServlet extends HttpServlet {
     @SneakyThrows
     private void onLoginSuccess(ClientDto client, HttpServletRequest request, HttpServletResponse response) {
         request.getSession().setAttribute("client", client);
-        response.sendRedirect("/main");
+        ClientDto clientDto = (ClientDto) request.getSession().getAttribute("client");
+
+        if (clientDto.getRole().getRole().equals("ADMIN")) {
+            response.sendRedirect(ADMIN);
+        } else
+            response.sendRedirect(MAIN);
     }
 }

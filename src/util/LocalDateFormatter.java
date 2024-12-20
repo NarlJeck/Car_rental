@@ -1,6 +1,5 @@
 package util;
 
-import exception.DateSelectException;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
@@ -17,12 +16,9 @@ public class LocalDateFormatter {
         return LocalDate.parse(date, FORMATTER);
     }
 
-
     public boolean checkDate(LocalDate dateStart, LocalDate dateEnd) {
 
         boolean isDateParseAfterOrEqual = dateEnd.isEqual(dateStart) || dateEnd.isAfter(dateStart);
-        System.out.println("Сравнение дат конца и начала _______)" + dateEnd.isEqual(dateStart));
-        System.out.println("Проверка даты конца что идет за датой старта__________" + dateEnd.isAfter(dateStart));
 
         if (isDateParseAfterOrEqual) {
             return true;
